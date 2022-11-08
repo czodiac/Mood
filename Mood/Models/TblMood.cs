@@ -14,9 +14,21 @@ namespace Mood.Models
         public virtual TblMoodName Mood { get; set; } = null!;
         public virtual TblUser User { get; set; } = null!;
 
-        public static bool GetMoodFrequency(int UserId) {
-            bool result = false;
-            return result;
+        public class LocationMood {
+            public int LocationID { get; set; }
+            public string LocationName { get; set; }
+            public List<MoodFrequency> Mood { get; set; }
+        }
+        public class MoodFrequency {
+            public int MoodID { get; set; }
+            public string MoodName { get; set; }
+            public int Count { get; set; }
+
+            public MoodFrequency(int MoodID, string MoodName, int Count) {
+                this.MoodID = MoodID;
+                this.MoodName = MoodName;
+                this.Count = Count;
+            }
         }
     }
 }

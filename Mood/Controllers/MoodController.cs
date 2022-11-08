@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Mood.Models;
+using System.Collections.Generic;
+using static Mood.Models.TblMood;
 
 namespace Mood.Controllers {
     [Route("api/[controller]")]
@@ -14,47 +17,79 @@ namespace Mood.Controllers {
         }
 
         [HttpPost("PostMood")]
-        /*[AutoValidateAntiforgeryToken] // Prevent CSRF*/
         public async Task<IActionResult> PostMood(int UserId, int MoodId, int LocationId) {
-            if (UserId < 1 || MoodId < 1 || LocationId < 1)
-                return BadRequest();
+            // Assumptions:
+            // - Per each visit, the user's mood is logged only once.
+            // - User can visit the same place multiple times.
+            // - User can visit the same place but the mood may differ.
 
-            TblMood mood = new TblMood();
-            mood.UserId = UserId;
-            mood.MoodId = MoodId;
-            mood.LocationId = LocationId;
-            _db.Add(mood);
-            await _db.SaveChangesAsync();
+            if (UserId < 1 || MoodId < 1 || LocationId < 1)
+                return BadRequest("UserId, MoodId and LocationId have to be greater than 0.");
+
+            try {
+                TblMood mood = new TblMood();
+                mood.UserId = UserId;
+                mood.MoodId = MoodId;
+                mood.LocationId = LocationId;
+                _db.Add(mood);
+                await _db.SaveChangesAsync();
+            } catch (Exception e) {
+                return BadRequest(e);
+            }
             return Ok();
         }
 
         [HttpGet("GetMoodFrequency")]
         public async Task<IActionResult> GetMoodFrequency(int UserId) {
-            if (UserId < 1)
-                return BadRequest();
+            // Assumptions: Return mood frequency(count) for all locations. If this user has never visited the location, the count will be 0.
 
-            var moods = await _db.TblMoods.ToListAsync();
-            var filtered = moods.Where(x => x.UserId == UserId).GroupBy(x => x.LocationId);
-            if (filtered == null || filtered.Count() < 1)
+            if (UserId < 1)
+                return BadRequest("UserId has to be greater than 0.");
+
+            var moods = await _db.TblMoods.ToListAsync(); // Get all mood records.
+            var moodsForUserId = moods.Where(x => x.UserId == UserId); // Filter mood records by UserId
+            var moodNames = await _db.TblMoodNames.ToListAsync(); // Get all mood names/weight.
+            var locations = await _db.TblLocations.ToListAsync(); // Get all locations.
+
+            Dictionary<int, int> happyScoreForEachLoc = new Dictionary<int, int>();
+            List<LocationMood> result = new List<LocationMood>();
+            foreach (TblLocation l in locations) {
+                LocationMood lm = new LocationMood();
+                lm.LocationID = l.LocationId;
+                lm.LocationName = l.LocationName;
+
+                List<MoodFrequency> mf = new List<MoodFrequency>();
+                foreach (TblMoodName m in moodNames) {
+                    mf.Add(new MoodFrequency(m.MoodId, m.MoodName, 0));
+                }
+
+                var moodsForThisLoc = moodsForUserId.Where(x => x.LocationId == l.LocationId);
+                foreach (TblMood mood in moodsForThisLoc) {
+                    //mf.Find()   
+                    MoodFrequency tempMF = mf.Find(x => x.MoodID == mood.MoodId);
+                    if (tempMF != null) 
+                        tempMF.Count += 1;
+                }
+                lm.Mood = mf;
+                result.Add(lm);
+            }
+
+            if (result.Count() == 0)
                 return NotFound();
 
-            return Ok(filtered);
+            return Ok(result);
         }
 
         [HttpGet("GetClosestHappyLocation")]
         public async Task<IActionResult> GetClosestHappyLocation(int UserId, int LocationId) {
             if (UserId < 1 || LocationId < 1)
-                return BadRequest();
+                return BadRequest("UserId and LocationId have to be greater than 0.");
 
-            // Get all mood data
-            var moods = await _db.TblMoods.ToListAsync();
-            var moodsForUserId = moods.Where(x => x.UserId == UserId);
+            var moods = await _db.TblMoods.ToListAsync(); // Get all mood records.
+            var moodsForUserId = moods.Where(x => x.UserId == UserId); // Filter mood records by UserId
+            var moodNames = await _db.TblMoodNames.ToListAsync(); // Get all mood names/weight.
+            var locations = await _db.TblLocations.ToListAsync(); // Get all locations.
 
-            // Get all mood names/weight
-            var moodNames = await _db.TblMoodNames.ToListAsync();
-
-            // Get all locations
-            var locations = await _db.TblLocations.ToListAsync();
             var location = locations.Where(x => x.LocationId == LocationId).FirstOrDefault();
             if (location == null ) {
                 return NotFound(string.Format("LocationId {0} was not found in DB.", LocationId));

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Mood.Controllers;
 using Mood.Models;
+using static Mood.Controllers.MoodController;
 
 namespace MoodNunitTest {
     public class Tests {
@@ -19,6 +20,8 @@ namespace MoodNunitTest {
         [Test]
         public async Task Get_All_Moods() {
             var moods = await _moodController.GetMoodFrequency(2);
+
+            LocationMood m = new LocationMood();
 
             Assert.Pass();
         }
