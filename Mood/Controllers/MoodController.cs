@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Mood.Models;
 using System.Collections.Generic;
+using System.Security.Claims;
 using static Mood.Models.TblMood;
 
 namespace Mood.Controllers {
@@ -15,6 +17,25 @@ namespace Mood.Controllers {
         public MoodController(MoodDBContext context) {
             _db = context;
         }
+
+        /*
+        private UserModel GetCurrentUser() {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity != null) {
+                var userClaims = identity.Claims;
+
+                return new UserModel {
+                    Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
+                    EmailAddress = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
+                    GivenName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
+                    Surname = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Surname)?.Value,
+                    Role = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value
+                };
+            }
+            return null;
+        }
+        */
 
         [HttpPost("PostMood")]
         public async Task<IActionResult> PostMood(int UserId, int MoodId, int LocationId) {
@@ -40,6 +61,7 @@ namespace Mood.Controllers {
         }
 
         [HttpGet("GetMoodFrequency")]
+        [Authorize(Roles ="Administrator")]
         public async Task<IActionResult> GetMoodFrequency(int UserId) {
             // Assumptions: Return mood frequency(count) for all locations. If this user has never visited the location, the count will be 0.
 

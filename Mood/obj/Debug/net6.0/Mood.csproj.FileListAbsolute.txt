@@ -122,3 +122,5 @@ C:\Users\이중환\Desktop\C#\Mood\Mood\obj\Debug\net6.0\refint\Mood.dll
 C:\Users\이중환\Desktop\C#\Mood\Mood\obj\Debug\net6.0\Mood.pdb
 C:\Users\이중환\Desktop\C#\Mood\Mood\obj\Debug\net6.0\Mood.genruntimeconfig.cache
 C:\Users\이중환\Desktop\C#\Mood\Mood\obj\Debug\net6.0\ref\Mood.dll
+C:\Users\이중환\Desktop\C#\Mood\Mood\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\이중환\Desktop\C#\Mood\Mood\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
