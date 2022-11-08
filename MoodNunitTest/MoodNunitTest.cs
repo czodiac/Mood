@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Mood.Controllers;
 using Mood.Models;
-using static Mood.Controllers.MoodController;
+using static Mood.Models.TblMood;
 
 namespace MoodNunitTest {
     public class Tests {
