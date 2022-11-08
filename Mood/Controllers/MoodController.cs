@@ -18,7 +18,13 @@ namespace Mood.Controllers {
             _db = context;
         }
 
+        [HttpGet("HeartBeat")]
+        public async Task<IActionResult> HeartBeat() {
+            return Ok("Service running");
+        }
+
         [HttpPost("PostMood")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> PostMood(int UserId, int MoodId, int LocationId) {
             // Assumptions:
             // - Per each visit, the user's mood is logged only once.
@@ -42,7 +48,7 @@ namespace Mood.Controllers {
         }
 
         [HttpGet("GetMoodFrequency")]
-        [Authorize(Roles ="Administrator")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> GetMoodFrequency(int UserId) {
             // Assumptions: Return mood frequency(count) for all locations. If this user has never visited the location, the count will be 0.
 
@@ -84,6 +90,7 @@ namespace Mood.Controllers {
         }
 
         [HttpGet("GetClosestHappyLocation")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> GetClosestHappyLocation(int UserId, int LocationId) {
             if (UserId < 1 || LocationId < 1)
                 return BadRequest("UserId and LocationId have to be greater than 0.");
