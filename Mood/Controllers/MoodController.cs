@@ -27,7 +27,6 @@ namespace Mood.Controllers {
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> PostMood(int UserId, int MoodId, int LocationId) {
             // Assumptions:
-            // - Per each visit, the user's mood is logged only once.
             // - User can visit the same place multiple times.
             // - User can visit the same place but the mood may differ.
 
@@ -92,6 +91,10 @@ namespace Mood.Controllers {
         [HttpGet("GetClosestHappyLocation")]
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> GetClosestHappyLocation(int UserId, int LocationId) {
+            // Assumptions:
+            // - If distance is the same, return the location with higher happy score.
+            // - In this 2 dimensional space where X and Y axis exist, one can only move left, right, top or bottom. He can't move diagonally.
+
             if (UserId < 1 || LocationId < 1)
                 return BadRequest("UserId and LocationId have to be greater than 0.");
 

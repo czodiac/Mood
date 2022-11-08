@@ -56,7 +56,7 @@ namespace Mood.Controllers {
         }
 
         private TblUser Authenticate(UserLogin userLogin) {
-            
+            // User name is case-insensitive but password is case-sensitive.
             var currentUser = _db.TblUsers.FirstOrDefault(o => o.UserName.ToLower() == userLogin.Username.ToLower() && o.Password == userLogin.Password);
 
             if (currentUser != null) {
