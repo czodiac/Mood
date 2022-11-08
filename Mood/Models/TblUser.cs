@@ -12,6 +12,11 @@ namespace Mood.Models
 
         public int UserId { get; set; }
         public string UserName { get; set; } = null!;
+        public string? Password { get; set; }
+        public string? EmailAddress { get; set; }
+        public string? Role { get; set; }
+        public string? Surname { get; set; }
+        public string? GivenName { get; set; }
 
         public virtual ICollection<TblMood> TblMoods { get; set; }
     }

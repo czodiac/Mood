@@ -7,6 +7,7 @@ namespace Mood.Models
 {
     public partial class MoodDBContext : DbContext
     {
+
         public MoodDBContext(DbContextOptions<MoodDBContext> options)
             : base(options)
         {
@@ -26,10 +27,6 @@ namespace Mood.Models
                 entity.ToTable("tblLocations");
 
                 entity.Property(e => e.LocationId).HasColumnName("LocationID");
-
-                entity.Property(e => e.DistanceXaxis).HasColumnName("DistanceXAxis");
-
-                entity.Property(e => e.DistanceYaxis).HasColumnName("DistanceYAxis");
 
                 entity.Property(e => e.LocationName).HasMaxLength(100);
             });
@@ -83,6 +80,20 @@ namespace Mood.Models
                 entity.ToTable("tblUsers");
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.Property(e => e.EmailAddress).HasMaxLength(150);
+
+                entity.Property(e => e.GivenName).HasMaxLength(100);
+
+                entity.Property(e => e.Password)
+                    .HasMaxLength(100)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Role)
+                    .HasMaxLength(50)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Surname).HasMaxLength(100);
 
                 entity.Property(e => e.UserName).HasMaxLength(100);
             });

@@ -13,8 +13,10 @@ namespace Mood.Controllers {
     [ApiController]
     public class LoginController : ControllerBase {
         private IConfiguration _config;
+        private readonly MoodDBContext _db;
 
-        public LoginController(IConfiguration config) {
+        public LoginController(MoodDBContext context, IConfiguration config) {
+            _db = context;
             _config = config;
         }
 
@@ -31,17 +33,17 @@ namespace Mood.Controllers {
             return NotFound("User not found");
         }
 
-        private string Generate(UserModel user) {
+        private string Generate(TblUser user) {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Username),
-                new Claim(ClaimTypes.Email, user.EmailAddress),
-                new Claim(ClaimTypes.GivenName, user.GivenName),
-                new Claim(ClaimTypes.Surname, user.Surname),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.NameIdentifier, user.UserName.Trim()),
+                new Claim(ClaimTypes.Email, user.EmailAddress.Trim()),
+                new Claim(ClaimTypes.GivenName, user.GivenName.Trim()),
+                new Claim(ClaimTypes.Surname, user.Surname.Trim()),
+                new Claim(ClaimTypes.Role, user.Role.Trim())
             };
 
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
@@ -53,8 +55,9 @@ namespace Mood.Controllers {
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private UserModel Authenticate(UserLogin userLogin) {
-            var currentUser = UserConstants.Users.FirstOrDefault(o => o.Username.ToLower() == userLogin.Username.ToLower() && o.Password == userLogin.Password);
+        private TblUser Authenticate(UserLogin userLogin) {
+            
+            var currentUser = _db.TblUsers.FirstOrDefault(o => o.UserName.ToLower() == userLogin.Username.ToLower() && o.Password == userLogin.Password);
 
             if (currentUser != null) {
                 return currentUser;

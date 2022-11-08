@@ -142,3 +142,5 @@ C:\Users\이중환\Desktop\C#\Mood\MoodNunitTest\bin\Debug\net6.0\runtimes\win\l
 C:\Users\이중환\Desktop\C#\Mood\MoodNunitTest\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
 C:\Users\이중환\Desktop\C#\Mood\MoodNunitTest\bin\Debug\net6.0\Mood.dll
 C:\Users\이중환\Desktop\C#\Mood\MoodNunitTest\bin\Debug\net6.0\Mood.pdb
+C:\Users\이중환\Desktop\C#\Mood\MoodNunitTest\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\이중환\Desktop\C#\Mood\MoodNunitTest\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
