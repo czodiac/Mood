@@ -15,7 +15,7 @@ namespace Mood.Controllers {
 
         [HttpGet("GetMoodFrequency")]
         /*[HttpGet("GetMoodFrequency/{UserId}")]*/
-        public async Task<IActionResult> Get(int UserId) {
+        public async Task<IActionResult> GetMoodFrequency(int UserId) {
             Models.TblMood.GetMoodFrequency(UserId);
             if (UserId < 1)
                 return BadRequest();
@@ -29,7 +29,7 @@ namespace Mood.Controllers {
 
         [HttpPost("PostMood")]
         /*[AutoValidateAntiforgeryToken] // Prevent CSRF*/
-        public async Task<IActionResult> Post(int UserId, int MoodId, int LocationId) {
+        public async Task<IActionResult> PostMood(int UserId, int MoodId, int LocationId) {
             if (UserId < 1 || MoodId < 1 || LocationId < 1)
                 return BadRequest();
 
