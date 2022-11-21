@@ -54,8 +54,14 @@ Assumptions
 Implementations
 ============
 •	MS .NET Core 6 API project was used to implement these APIs in C#.
+
 •	MS SQL, version Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 was used to store initial sample data.
+
 •	JWT generated using Hmac-Sha256 is used to authorize a request.
+
 •	NUnit was used to test business logic.
+
 •	NUnit test cases call the actual API’s method in the controller. Some NUnit test cases connect to SQL and use the data in SQL to validate test cases.
+
 •	“Administrator” role is required to invoke PostMood, GetMoodFrequency and GetClosestHappyLocation API. “UserA” in tblUsers is the only user with the “Administrator” role. Therefore, only UserA’s JWT can be used to invoke those APIs. Any other user’s JWT will throw 403 Forbidden error. Any invalid JWT will throw 401 Unauthorized error.
+
